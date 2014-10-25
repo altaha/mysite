@@ -9,6 +9,10 @@
   "dependencies": {
     "pg": "2.x",
     "express": "~4.9.x",
+    "jade": "*",
+    "stylus": "*",
+    "body-parser": "*",
+    "method-override": "*",
     "cool-ascii-faces": "~1.3.x"
   },
   "engines": {
