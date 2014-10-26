@@ -4,7 +4,7 @@ var bodyParser = require('body-parser');
 var methodOverride = require('method-override');
 var cool = require('cool-ascii-faces');
 var pg = require('pg');
-var ArticleProvider = require('./articleprovider-memory').ArticleProvider;
+var ArticleProvider = require('./articleprovider-mongodb').ArticleProvider;
 
 
 app.set('port', (process.env.PORT || 5000));
@@ -15,11 +15,10 @@ app.use(bodyParser.urlencoded({  // to support URL encoded bodies
   extended: true
 }));
 app.use(require('stylus').middleware({ src: __dirname + '/public' }));
-//app.use(app.router);
 app.use(express.static(__dirname + '/public'));
 
-
-var articleProvider = new ArticleProvider();
+var mongouri = (process.env.MONGOLAB_URI || "local");
+var articleProvider = new ArticleProvider(mongouri);
 
 app.get('/', function(req, res) {
   articleProvider.findAll(function(error, docs) {
@@ -44,6 +43,27 @@ app.post('/blog/new', function(req, res) {
       res.redirect('/');
   });
 });
+
+app.get('/blog/:id', function(req, res) {
+    articleProvider.findById(req.params.id, function(error, article) {
+        res.render('blog_show.jade',
+        {
+            title: article.title,
+            article:article
+        });
+    });
+});
+
+app.post('/blog/addComment', function(req, res) {
+    articleProvider.addCommentToArticle(req.body._id, {
+        person: req.body.person,
+        comment: req.body.comment,
+        created_at: new Date()
+       } , function( error, docs) {
+           res.redirect('/blog/' + req.param('_id'))
+       });
+});
+
 
 app.get('/sample', function(request, response) {
   var result = ''

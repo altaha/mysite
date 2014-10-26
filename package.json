@@ -13,6 +13,8 @@
     "stylus": "*",
     "body-parser": "*",
     "method-override": "*",
+    "mongodb": "*",
+    "stringtokenizer": "*",
     "cool-ascii-faces": "~1.3.x"
   },
   "engines": {
